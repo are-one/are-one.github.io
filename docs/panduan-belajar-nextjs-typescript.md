@@ -154,6 +154,8 @@ Dependency penting di project ini:
 
 Catatan:
 
+- Project ini belum memasang ReactBits. Tidak ada dependency atau import `reactbits`, `ReactBits`, atau `react-bits`.
+- Animasi yang aktif saat ini berasal dari komponen custom di `src/animations`, `framer-motion`, dan canvas background.
 - Folder `node_modules` tidak perlu diedit manual.
 - Jika install bermasalah, hapus `node_modules` dan jalankan `npm install` lagi.
 - Jangan mengubah `package-lock.json` secara manual.
@@ -196,7 +198,7 @@ npm run build
 Script ini menjalankan:
 
 ```bash
-next build
+next build --webpack
 ```
 
 Build akan:
@@ -234,6 +236,7 @@ Catatan penting:
 
 - `npm run start` membutuhkan hasil dari `npm run build`.
 - Jika belum build, jalankan `npm run build` terlebih dahulu.
+- Karena project memakai `output: 'export'`, hasil deploy utama berada di folder `out`. Untuk GitHub Pages, gunakan `npm run deploy` setelah build.
 
 ### 7. Linting
 
@@ -260,9 +263,10 @@ Project ini punya script utama:
 | Script | Command Asli | Kapan Dipakai |
 | --- | --- | --- |
 | `npm run dev` | `next dev` | Saat coding dan melihat perubahan langsung. |
-| `npm run build` | `next build` | Saat mengecek apakah project siap production. |
+| `npm run build` | `next build --webpack` | Saat mengecek apakah project siap production dan menghasilkan static output. |
 | `npm run start` | `next start` | Saat menjalankan hasil build production. |
 | `npm run lint` | `next lint` | Saat mengecek aturan kode dan potensi masalah. |
+| `npm run deploy` | `gh-pages -d out --dotfiles` | Saat deploy static output dari folder `out` ke GitHub Pages. |
 
 Alur harian yang disarankan:
 
@@ -287,7 +291,11 @@ Isi saat ini:
 ```js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
 };
 
 module.exports = nextConfig;
@@ -296,12 +304,12 @@ module.exports = nextConfig;
 Penjelasan:
 
 - `next.config.js` adalah file konfigurasi Next.js.
-- `reactStrictMode: true` membantu menemukan potensi masalah saat development.
-- Strict Mode bisa membuat beberapa proses development terlihat berjalan dua kali. Ini normal di mode development dan membantu mendeteksi side effect yang tidak aman.
+- `output: 'export'` membuat hasil build static ke folder `out`, cocok untuk hosting seperti GitHub Pages.
+- `trailingSlash: true` membuat URL static lebih aman untuk hosting berbasis file.
+- `images.unoptimized: true` diperlukan karena static export tidak memakai optimizer image bawaan server Next.js.
 
 Setting yang mungkin ditambahkan nanti:
 
-- Konfigurasi domain image untuk `next/image`.
 - Redirect atau rewrite URL.
 - Konfigurasi eksperimen Next.js jika diperlukan.
 - Optimasi build tertentu.
@@ -453,11 +461,13 @@ Yang dipelajari:
 - Data disimpan sebagai array atau object.
 - UI membaca data dari file ini.
 - Mengubah data bisa mengubah tampilan tanpa mengubah JSX besar.
+- Beberapa data icon disimpan sebagai string, lalu dirender lewat `iconMap` di component.
 
 Tujuan belajar:
 
 - Paham konsep data-driven UI.
 - Bisa menambah skill atau project baru.
+- Bisa menambah social link atau skill baru tanpa mematahkan render icon.
 
 ### Step 4: Pahami TypeScript Type
 
@@ -503,11 +513,19 @@ Yang dipelajari:
 - Cara JSX membentuk UI.
 - Cara class CSS dipakai.
 - Cara animasi dibungkus di component.
+- Cara `HeroSection.tsx` dan `SkillsSection.tsx` mengubah nama icon string menjadi komponen React melalui `iconMap`.
 
 Tujuan belajar:
 
 - Bisa membuat section baru.
 - Bisa memecah section besar menjadi component kecil.
+
+Catatan icon:
+
+- `src/data/profile.ts` menyimpan social icon seperti `FaGithub`, `FaLinkedin`, dan `FaInstagram`.
+- `src/data/skills.ts` menyimpan skill icon seperti `FaReact`, `SiTypescript`, dan `SiMysql`.
+- String tersebut tidak bisa langsung dirender sebagai `<social.icon />`.
+- Component harus punya map icon, lalu render dengan `{iconMap[social.icon]}` atau `{iconMap[skill.icon]}`.
 
 ### Step 6: Pahami Theme
 
@@ -780,6 +798,15 @@ Cek:
 - File CSS ter-import.
 - Cache browser.
 - Style tidak tertimpa selector lain.
+
+### Icon Social atau Skill Tidak Muncul
+
+Jika icon seperti GitHub, LinkedIn, Instagram, atau skill tidak tampil, cek:
+
+- Nama icon di file data sesuai dengan key di `iconMap`.
+- Icon sudah di-import dari package yang benar, misalnya `react-icons/fa` atau `react-icons/si`.
+- Component merender `{iconMap[social.icon]}` atau `{iconMap[skill.icon]}`, bukan `<social.icon />`.
+- Jika menambah icon baru di `src/data/profile.ts` atau `src/data/skills.ts`, tambahkan juga icon tersebut ke `iconMap` component terkait.
 
 ### Build Berhasil tetapi Tampilan Berbeda
 

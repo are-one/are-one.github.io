@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = ['Home', 'About', 'Skills', 'Projects', 'Contact'];
+  const navLinks = ['Home', 'About', 'Projects', 'Skills', 'Contact'];
 
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>

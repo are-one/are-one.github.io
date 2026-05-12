@@ -26,8 +26,18 @@ const ParticleBackground: React.FC = () => {
     if (!ctx) return;
 
     let animationFrameId: number;
+    let lastFrameTime = 0;
+    const frameInterval = 1000 / 30;
     const particles: Particle[] = [];
     const mousePosition = { x: 0, y: 0 };
+    let isLightMode = document.body.classList.contains('light-mode');
+
+    const updateTheme = () => {
+      isLightMode = document.body.classList.contains('light-mode');
+    };
+
+    const themeObserver = new MutationObserver(updateTheme);
+    themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -48,10 +58,10 @@ const ParticleBackground: React.FC = () => {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         size: Math.random() * 3 + 1,
-        speedX: (Math.random() - 0.5) * 0.5,
-        speedY: (Math.random() - 0.5) * 0.5,
+        speedX: (Math.random() - 0.5) * 0.12,
+        speedY: (Math.random() - 0.5) * 0.12,
         opacity: Math.random() * 0.5 + 0.2,
-        color: `hsl(${Math.random() * 60 + 230}, 70%, 60%)`,
+        color: `hsl(${Math.random() * 70 + 220}, 72%, ${isLightMode ? 58 : 64}%)`,
         targetX: 0,
         targetY: 0,
         connections: [],
@@ -76,15 +86,15 @@ const ParticleBackground: React.FC = () => {
 
       if (distanceToMouse < 200) {
         const force = (200 - distanceToMouse) / 200;
-        particle.targetX = particle.x - dx * force * 0.02;
-        particle.targetY = particle.y - dy * force * 0.02;
+          particle.targetX = particle.x - dx * force * 0.008;
+          particle.targetY = particle.y - dy * force * 0.008;
       } else {
         particle.targetX += particle.speedX;
         particle.targetY += particle.speedY;
       }
 
-      particle.x += (particle.targetX - particle.x) * 0.1;
-      particle.y += (particle.targetY - particle.y) * 0.1;
+      particle.x += (particle.targetX - particle.x) * 0.04;
+      particle.y += (particle.targetY - particle.y) * 0.04;
 
       if (particle.x < 0) particle.x = canvas.width;
       if (particle.x > canvas.width) particle.x = 0;
@@ -132,13 +142,26 @@ const ParticleBackground: React.FC = () => {
       });
     };
 
-    const animate = () => {
+    const animate = (currentTime: number) => {
+      animationFrameId = requestAnimationFrame(animate);
+
+      if (currentTime - lastFrameTime < frameInterval) {
+        return;
+      }
+
+      lastFrameTime = currentTime;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, '#0a192f');
-      gradient.addColorStop(0.5, '#112240');
-      gradient.addColorStop(1, '#0a192f');
+      if (isLightMode) {
+        gradient.addColorStop(0, '#f7f8fc');
+        gradient.addColorStop(0.45, '#eef2ff');
+        gradient.addColorStop(1, '#fff6fb');
+      } else {
+        gradient.addColorStop(0, '#0a192f');
+        gradient.addColorStop(0.5, '#112240');
+        gradient.addColorStop(1, '#0a192f');
+      }
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -152,15 +175,15 @@ const ParticleBackground: React.FC = () => {
         drawParticle(particle);
       });
 
-      animationFrameId = requestAnimationFrame(animate);
     };
 
     init();
-    animate();
+    animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
+      themeObserver.disconnect();
       cancelAnimationFrame(animationFrameId);
     };
   }, []);

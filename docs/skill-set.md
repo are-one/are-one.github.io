@@ -358,20 +358,21 @@ Project ini menonjolkan kemampuan dalam membangun portfolio interaktif dengan an
 
 Daftar skill yang saat ini ditampilkan pada komponen `src/components/sections/SkillsSection.tsx`:
 
+- N8N (Automation)
+- Laravel
 - React
 - Next.js
 - TypeScript
 - JavaScript
 - Node.js
 - Python
-- MongoDB
-- PostgreSQL
+- MySQL
+- MariaDB
 - Tailwind CSS
 - Docker
 - Git
-- Figma
 
-Data skill diambil dari `src/data/skills.ts` (tidak lagi hardcoded).
+Data skill diambil dari `src/data/skills.ts` (tidak lagi hardcoded). Icon skill disimpan sebagai nama string, lalu diubah menjadi komponen React melalui `iconMap` di `SkillsSection.tsx`.
 
 ## Bukti Implementasi di Project
 
@@ -379,13 +380,30 @@ Beberapa bagian project yang menunjukkan penerapan skill teknis:
 
 - `src/app/layout.tsx`: Root layout dengan ThemeProvider, metadata SEO, dan Next.js App Router.
 - `src/app/page.tsx`: Halaman utama yang mengkomposisi semua section.
-- `src/components/sections/HeroSection.tsx`: Hero section dengan Framer Motion, typewriter effect, social links, dan call-to-action.
-- `src/components/sections/SkillsSection.tsx`: Rendering skill cards secara dinamis dari `src/data/skills.ts`.
+- `src/components/sections/HeroSection.tsx`: Hero section dengan Framer Motion, typewriter effect, social links, call-to-action, dan `iconMap` untuk merender icon social dari data profile.
+- `src/components/sections/SkillsSection.tsx`: Rendering skill cards secara dinamis dari `src/data/skills.ts` memakai pola `iconMap`.
 - `src/components/sections/ProjectsSection.tsx`: Filter project berdasarkan kategori dan interaksi hover pada project card dari `src/data/projects.ts`.
 - `src/animations/`: Kumpulan komponen animasi reusable seperti reveal, parallax, magnetic hover, typewriter, particle background, dan floating elements (semua .tsx).
 - `src/app/globals.css`: Styling global, theme, layout section, responsive grid, card style, dan visual treatment.
 - `src/types/`: TypeScript type definitions untuk `Skill`, `Project`, `Profile`.
 - `src/data/`: Static data yang terpisah dari UI.
+
+## Pola Icon dari Data
+
+Project ini menyimpan nama icon sebagai string di file data, misalnya `FaGithub` di `src/data/profile.ts` atau `SiTypescript` di `src/data/skills.ts`. String tersebut tidak bisa langsung dirender sebagai komponen React.
+
+Pola yang digunakan:
+
+1. Import icon yang dibutuhkan dari `react-icons`.
+2. Buat `iconMap: Record<string, React.ReactNode>` di component.
+3. Render icon dengan akses map, misalnya `{iconMap[social.icon]}` atau `{iconMap[skill.icon]}`.
+
+Pola ini sudah digunakan di:
+
+- `src/components/sections/HeroSection.tsx` untuk social links seperti GitHub, LinkedIn, dan Instagram.
+- `src/components/sections/SkillsSection.tsx` untuk daftar skill.
+
+Jika menambahkan social link atau skill baru, pastikan nama icon di file data juga ditambahkan ke `iconMap` component terkait.
 
 ## Catatan Teknologi Project
 
@@ -393,15 +411,23 @@ Saat dokumen ini diperbarui, project **sudah berjalan dengan Next.js + TypeScrip
 
 **Dependencies utama:**
 
-- `next` (versi terbaru)
-- `react` (versi 18+)
+- `next` 16.x
+- `react` 19.x
 - `react-dom`
 - `framer-motion`
 - `react-icons`
 - `react-intersection-observer`
+- `gsap`
+- `aos`
 - `typescript`
 - `@types/react`
 - `@types/node`
+
+**Catatan ReactBits:**
+
+Saat dokumen ini diperbarui, project belum memasang dependency ReactBits dan tidak ada referensi `reactbits`, `ReactBits`, atau `react-bits` di source. Efek animasi yang ada saat ini berasal dari komponen custom di `src/animations/`, `framer-motion`, canvas background, dan dependency animasi lain yang sudah tercantum.
+
+Jika nanti ingin mengambil komponen dari ReactBits, gunakan secara selektif. Portfolio ini sudah memiliki beberapa animasi aktif, sehingga tambahan efek visual sebaiknya diuji di mobile dan tidak dipasang berlebihan.
 
 **Konfigurasi:**
 

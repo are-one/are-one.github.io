@@ -9,10 +9,14 @@ const Footer: React.FC = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-social">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/are-one" target="_blank" rel="noopener noreferrer">
               <FaGithub />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://linkedin.com/in/arwan-prianto-mangidi"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaLinkedin />
             </a>
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
@@ -21,7 +25,7 @@ const Footer: React.FC = () => {
           </div>
 
           <p className="footer-text">
-            Made with <FaHeart className="heart-icon" /> by Your Name &copy; {currentYear}
+            Made with <FaHeart className="heart-icon" /> by Are-One &copy; {currentYear}
           </p>
 
           <div className="footer-links">

@@ -20,6 +20,7 @@ import {
   SiTailwindcss,
   SiNextdotjs,
   SiN8N,
+  SiPhp,
 } from 'react-icons/si';
 import RevealOnScroll from '@/animations/RevealOnScroll';
 import ParallaxTilt from '@/animations/ParallaxTilt';
@@ -42,6 +43,7 @@ const iconMap: Record<string, React.ReactNode> = {
   SiMysql: <SiMysql />,
   SiMariadb: <SiMariadb />,
   SiN8N: <SiN8N />,
+  SiPhp: <SiPhp />,
 };
 
 const SkillsSection: React.FC = () => {

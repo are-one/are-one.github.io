@@ -1,16 +1,43 @@
 'use client';
 
-import React from 'react';
-import { FaGithub, FaLinkedin, FaTwitter, FaArrowDown } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { FaGithub, FaLinkedin, FaInstagram, FaArrowDown, FaLanguage } from 'react-icons/fa';
+import { AnimatePresence, motion } from 'framer-motion';
 import TextReveal from '@/animations/TextReveal';
 import ScrollReveal from '@/animations/ScrollReveal';
 import TypewriterEffect from '@/animations/TypewriterEffect';
 import MagneticHover from '@/animations/MagneticHover';
 import { profile } from '@/data/profile';
 
+const iconMap: Record<string, React.ReactNode> = {
+  FaGithub: <FaGithub />,
+  FaLinkedin: <FaLinkedin />,
+  FaInstagram: <FaInstagram />,
+};
+
+type HeroLanguage = 'en' | 'id';
+
+const heroDescriptions: Record<HeroLanguage, string> = {
+  en: 'I build dynamic and user-friendly web applications using modern technologies. Passionate about creating efficient digital solutions that solve real-world problems and provide meaningful impact.',
+  id: 'Saya membangun aplikasi web yang dinamis dan mudah digunakan dengan menggunakan teknologi modern. Memiliki passion dalam menciptakan solusi digital yang efisien untuk menyelesaikan permasalahan di dunia nyata dan memberikan dampak yang bermanfaat.',
+};
+
 const HeroSection: React.FC = () => {
-  const roles = ['Full Stack Developer', 'UI/UX Enthusiast', 'Problem Solver', 'Tech Innovator'];
+  const [language, setLanguage] = useState<HeroLanguage>('en');
+  const roles = [
+    'Software Developer',
+    'Full Stack Developer',
+    'Backend Developer',
+    'Web Application Developer',
+    'Laravel Developer',
+    'React & Next.js Developer',
+    'System Integration Developer',
+    'REST API Developer',
+    'Problem Solver',
+    'Tech Enthusiast',
+    'Automation Enthusiast',
+    'Continuous Learner',
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -52,10 +79,35 @@ const HeroSection: React.FC = () => {
 
           <ScrollReveal direction="up" delay={0.6}>
             <TextReveal delay={0.8}>
-              <p className="hero-description">
-                I craft beautiful and functional web experiences with modern technologies.
-                Passionate about creating innovative solutions that make a difference.
-              </p>
+              <div className="hero-description-group">
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={language}
+                    className="hero-description"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                  >
+                    {heroDescriptions[language]}
+                  </motion.p>
+                </AnimatePresence>
+
+                <div className="hero-language-toggle" aria-label="Hero description language">
+                  <FaLanguage className="language-icon" aria-hidden="true" />
+                  {(['en', 'id'] as HeroLanguage[]).map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      className={`language-option ${language === item ? 'active' : ''}`}
+                      onClick={() => setLanguage(item)}
+                      aria-pressed={language === item}
+                    >
+                      {item.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </TextReveal>
           </ScrollReveal>
 
@@ -96,7 +148,7 @@ const HeroSection: React.FC = () => {
                   whileHover={{ y: -5, scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <FaGithub />
+                  {iconMap[social.icon]}
                 </motion.a>
               ))}
             </motion.div>
@@ -116,9 +168,9 @@ const HeroSection: React.FC = () => {
         >
           <motion.div
             className="image-container glow-effect"
-            animate={{ y: [0, -20, 0] }}
+            animate={{ y: [0, -12, 0] }}
             transition={{
-              duration: 3,
+              duration: 6,
               repeat: Infinity,
               ease: 'easeInOut',
             }}
@@ -138,8 +190,8 @@ const HeroSection: React.FC = () => {
       <motion.a
         href="#about"
         className="scroll-down"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
+        animate={{ y: [0, 6, 0] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
       >
         <FaArrowDown />
       </motion.a>
